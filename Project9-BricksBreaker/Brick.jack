@@ -1,0 +1,50 @@
+class Brick {
+    field int x, y, width, height;
+    field boolean visible;
+
+    constructor Brick new(int xPos, int yPos, int w, int h) {
+        let x = xPos;
+        let y = yPos;
+        let width = w;
+        let height = h;
+        let visible = true;
+        return this;
+    }
+
+    method void draw() {
+        if (visible) {
+            do Screen.setColor(true);
+            do Screen.drawRectangle(x, y, x + width, y + height);
+        }
+        return;
+    }
+
+    method void erase() {
+        if (visible) {
+            do Screen.setColor(false);
+            do Screen.drawRectangle(x, y, x + width, y + height);
+            let visible = false;
+        }
+        return;
+    }
+
+    method boolean getVisible(){
+        return visible;
+    }
+
+    method int getX(){
+        return x;
+    }
+
+    method int getY(){
+        return y;
+    }
+
+    method int getWidth(){
+        return width;
+    }
+
+    method int getHeight(){
+        return height;
+    }
+}

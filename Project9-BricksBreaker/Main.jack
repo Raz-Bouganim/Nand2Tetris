@@ -1,0 +1,195 @@
+class Main {
+    field Paddle paddle;
+    field Ball ball;
+    field Brick brick;
+    field BrickLines brickLines;
+    field int i, j;
+
+    constructor Main new() {
+        // Initialize game
+        do initializeGame();
+        return this;
+    }
+
+    method void initializeGame() {
+        let paddle = Paddle.new();
+        let ball = Ball.new();
+        let brickLines = BrickLines.new(4, 10); // 4 rows and 10 columns of bricks
+        return;
+    }
+
+    method void run() {
+        var boolean gameRunning;
+        let gameRunning = true;
+
+        // Draw initial game state
+        do paddle.draw();
+        do brickLines.draw();
+
+        // Start game loop
+        while (gameRunning) {
+            do brickLines.draw();
+            do paddle.move();
+
+            // Check paddle collision
+            do checkPaddleCollision(paddle, ball);
+
+            // Check brick collision
+            let i = 0;
+            while (i < brickLines.getRows()) {
+                let j = 0;
+                while (j < brickLines.getCols()) {
+                    let brick = brickLines.getBrick(i, j);
+                    do checkBrickCollision(brick, ball);
+                    let j = j + 1;
+                }
+                let i = i + 1;
+            }
+
+            // Check if all bricks are destroyed (Win condition)
+            if (brickLines.allBricksDestroyed()) {
+                // Handle the win condition, e.g., clear the screen, show a message.
+                do Screen.clearScreen();   // Clear the screen
+                do Output.moveCursor(9, 19);
+                do Output.printString("Congratulations, You Win!");
+                do Output.moveCursor(12, 18);
+                do Output.printString("Press ENTER To Start Again");
+
+                // Wait for ENTER key to restart
+                while (~(Keyboard.keyPressed() = 128)) {}
+
+                do Screen.clearScreen();
+                do initializeGame(); // Reset the game
+                let gameRunning = false;
+            }
+
+            // Check if the ball is lost (Lose condition)
+            if (ball.lost()) {
+                // Handle the lose condition, e.g., clear the screen, show a message.
+                do Screen.clearScreen();   // Clear the screen
+                do Output.moveCursor(9, 26);
+                do Output.printString("You Lose:(");
+                do Output.moveCursor(12, 18);
+                do Output.printString("Press ENTER To Start Again");
+
+                // Wait for ENTER key to restart
+                while (~(Keyboard.keyPressed() = 128)) {}
+
+                do Screen.clearScreen();
+                do initializeGame(); // Reset the game
+                let gameRunning = false;
+            }
+
+            do ball.move();
+            do Sys.wait(10); // Pause for smooth gameplay
+        }
+
+        return;
+    }
+
+    method void checkPaddleCollision(Paddle paddle, Ball ball) {
+        var int ballX, ballY, paddleX, paddleY, paddleWidth, paddleHeight, paddleMid;
+        let ballX = ball.getX();
+        let ballY = ball.getY();
+        let paddleX = paddle.getX();
+        let paddleY = paddle.getY();
+        let paddleWidth = paddle.getWidth();
+        let paddleHeight = paddle.getHeight();
+        let paddleMid = paddleX + (paddleWidth / 2);
+
+
+        // Check paddle collision
+        if (ballY + 1 > paddleY) {
+            if (ballY - 1 < (paddleY + paddleHeight)) {
+                if (ballX + 1 > paddleX) {
+                    if (ballX - 1 < (paddleX + paddleWidth)) {
+                        // Determine collision side
+                        if (ballX = paddleX) { // Collision on the left side
+                            do ball.changeDx(); // Reverse horizontal direction
+                            return;
+                        } if (ballX = paddleX + paddleWidth) { // Collision on the right side
+                            do ball.changeDx(); // Reverse horizontal direction
+                            return;
+                        } if (ballY = paddleY) { // Collision on the top side
+                            if (ballX < paddleMid) { // Push to the left direction
+                                do ball.negativeDx();
+                            }
+                            if (ballX > paddleMid){ // Push to the right direction
+                                do ball.positiveDx();
+                            }
+                            do ball.changeDy(); // Reverse vertical direction
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        return;
+    }
+
+    method void checkBrickCollision(Brick brick, Ball ball) {
+        var int ballX, ballY, brickX, brickY, brickWidth, brickHeight;
+        let ballX = ball.getX();
+        let ballY = ball.getY();
+        let brickX = brick.getX();
+        let brickY = brick.getY();
+        let brickWidth = brick.getWidth();
+        let brickHeight = brick.getHeight();
+
+        // Check brick collision
+        if (brick.getVisible() = true) {
+            if ((ballY - 1 < (brickY + brickHeight)) & (ballX + 1 > brickX) & (ballX - 1 < (brickX + brickWidth)) & (ballY - 8 < brickY)) {
+                // Determine collision side
+                if ((ballX = brickX) | (ballX = brickX + brickWidth)) { // Collision on the left side
+                    do ball.changeDx(); // Reverse horizontal direction
+                    do brick.erase();
+                    return;
+                }
+                do ball.changeDy(); // Reverse vertical direction
+                do brick.erase();
+                return;
+            }
+            if ((ballY + 1 > brickY) & (ballX + 1 > brickX) & (ballX - 1 < (brickX + brickWidth)) & (ballY + 8 > brickY + brickHeight)) {
+                 // Determine collision side
+               if ((ballX = brickX) | (ballX = brickX + brickWidth)) { // Collision on the left side
+                    do ball.changeDx(); // Reverse horizontal direction
+                    do brick.erase();
+                    return;
+                }
+                do ball.changeDy(); // Reverse vertical direction
+                do brick.erase();
+                return;
+            }
+        }
+        return;
+    }
+
+    // Main entry point to start the game
+    function void main() {
+        var Main game;
+
+        // Create the game instance
+        let game = Main.new();
+
+        // Display welcome screen
+        do Screen.clearScreen();
+        do Output.moveCursor(9, 24);
+        do Output.printString("Bricks Breaker");
+        do Output.moveCursor(12, 21);
+        do Output.printString("Press ENTER To Start");
+        do Output.moveCursor(22, 13);
+        do Output.printString("Made By: Ohad Cohen and Raz Bouganim");
+
+        // Wait for ENTER to start
+        while (~(Keyboard.keyPressed() = 128)) {}
+
+        // Clear screen and start game loop
+        do Screen.clearScreen();
+        while (true) {
+            do game.run();
+        }
+
+        return;
+    }
+}

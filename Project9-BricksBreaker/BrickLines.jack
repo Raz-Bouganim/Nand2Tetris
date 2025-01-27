@@ -1,0 +1,88 @@
+class BrickLines {
+    field Array bricks;
+    field int rows, cols;
+
+    constructor BrickLines new(int rowCount, int colCount) {
+        var int i, j, x, y;
+        let rows = rowCount;
+        let cols = colCount;
+        let bricks = Array.new(rows * cols);
+        let y = 20;
+
+        let i = 0;
+        while (i < rows) {
+            let x = 18;
+            let j = 0;
+            while (j < cols) {
+                let bricks[i * cols + j] = Brick.new(x, y, 40, 7); // Create brick
+                let x = x + 48;
+                let j = j + 1;
+            }
+            let y = y + 17;
+            let i = i + 1;
+        }
+        return this;
+    }
+
+    method void draw() {
+        var int i, j;
+        var Brick brick;
+        let i = 0;
+        while (i < rows) {
+            let j = 0;
+            while (j < cols){
+                let brick = bricks[i * cols + j];
+                if (brick.getVisible() = true){
+                    do brick.draw();
+                }
+
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+        return;
+    }
+
+    // Method to check if all bricks in the line are destroyed
+    method boolean allBricksDestroyed() {
+        var int i, j;
+        var Brick brick;
+        let i = 0;
+
+        while (i < rows) {
+            let j = 0;
+            while (j < cols){
+                let brick = bricks[i * cols + j];
+                if (brick.getVisible() = true) {
+                    return false;  // If any brick is not destroyed, return false
+                }
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+        return true;  // All bricks are destroyed
+    }
+
+    // Method to get the brick at a specific row and column
+    method Brick getBrick(int row, int col) {
+        if (row > -1) {
+            if(row < rows) {
+                if(col > -1) {
+                    if (col < cols) {
+                        return bricks[row * cols + col];
+                    }
+                }
+            }
+        }
+        return null; // Return null if indices are out of bounds
+    }
+
+    method int getRows(){
+        return rows;
+    }
+
+    method int getCols(){
+        return cols;
+    }
+
+}

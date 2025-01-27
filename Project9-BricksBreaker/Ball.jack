@@ -1,0 +1,83 @@
+class Ball {
+    field int x, y, dx, dy;
+
+    constructor Ball new() {
+        let x = 80;
+        let y = 140;
+        let dx = 1;
+        let dy = -1;
+        return this;
+    }
+
+    method void move() {
+        do erase();
+
+        let x = x + dx;
+        let y = y + dy;
+
+        // Ensure ball stays within screen bounds
+        if (x < 2) { 
+            let x = 3; 
+            do changeDx();
+        }
+        if (x > 509) { 
+            let x = 508; 
+            do changeDx();
+        }
+        if (y < 2) { 
+            let y = 3;
+            do changeDy();
+        }
+
+        do draw();
+
+        return;
+    }
+
+      method void draw() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x - 1, y - 1 , x + 1, y + 1);
+        return;
+    }
+
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x - 1, y - 1, x + 1, y + 1);
+        return;
+    }
+
+    method boolean lost() {
+        if (y > 250) {
+            return true;
+        }
+        return false;
+    }
+
+    method int getX(){
+        return x;
+    }
+
+    method int getY(){
+        return y;
+    }
+
+    method void changeDy(){
+        let dy = -dy;
+        return;
+    }
+    
+    method void changeDx(){
+        let dx = -dx;
+        return;
+    }
+
+    method void negativeDx(){
+        let dx = -1;
+        return;
+    }
+
+    method void positiveDx(){
+        let dx = 1;
+        return;
+    }
+}
