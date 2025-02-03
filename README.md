@@ -36,4 +36,4 @@ This repository contains my implementations of the projects from the **Nand2Tetr
 
 ## About the Course
 
-The Nand2Tetris course covers all the steps involved in building a computer, starting from NAND gates to creating a functional software stack. This hands-on approach provides
+The Nand2Tetris course covers all the steps involved in building a computer, starting from NAND gates to creating a functional software stack. This hands-on approach provides a deep understanding of hardware-software interaction, covering digital logic, low-level programming, virtual machines, and compiler construction, culminating in a functional computer system.
